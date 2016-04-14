@@ -43,3 +43,9 @@ build/Release
 # Deployed apps should consider commenting this line out:
 # see https://npmjs.org/doc/faq.html#Should-I-check-my-node_modules-folder-into-git
 node_modules
+
+# added by SJR 4/27/2016
+*~
+docs/Makefile
+docs/Makefile~
+docs/build
