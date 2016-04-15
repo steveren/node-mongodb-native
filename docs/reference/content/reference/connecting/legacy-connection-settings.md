@@ -2,7 +2,7 @@
 date = "2015-03-19T12:53:30-04:00"
 title = "Legacy Connection Settings"
 [menu.main]
-  parent = "Connect to MongoDB"
+  parent = "Connection Options"
   identifier = "Legacy Connection Settings"
   weight = 40
   pre = "<i class='fa'></i>"

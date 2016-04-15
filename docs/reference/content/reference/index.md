@@ -3,7 +3,7 @@ date = "2015-03-17T15:36:56Z"
 title = "Reference"
 [menu.main]
   identifier = "Reference"
-  weight = 20
+  weight = 25
   pre = "<i class='fa fa-book'></i>"
 +++
 

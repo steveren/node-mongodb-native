@@ -16,6 +16,7 @@ The driver crud operations are defined as the operations performed to insert/upd
 
 ## Write Methods
 
+
 ### Inserting Documents
 The *insertOne* and *insertMany* methods exists on the *Collection* class and is used to insert documents into MongoDB. Code speaks a thousand words so let's see two simple examples of inserting documents.
 
