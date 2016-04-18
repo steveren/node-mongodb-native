@@ -75,9 +75,15 @@ MongoClient.connect(url, function(err, db) {
 });
 ```
 
+Run your app from the command line with:
+
+```
+node app.js
+```
+
 The application should print **Connected successfully to server** to the console.
 
-Add some code to show the different CRUD operations available:
+Add some code to use the different CRUD operations available:
 
 Inserting a Document
 --------------------
@@ -137,6 +143,77 @@ You should see the following output after running the **app.js** file.
 Connected successfully to server
 Inserted 3 documents into the collection
 ```
+
+Find All Documents
+------------------
+Next, add a query that returns all the documents.
+
+```js
+var findDocuments = function(db, callback) {
+  // Get the documents collection
+  var collection = db.collection('documents');
+  // Find some documents
+  collection.find({}).toArray(function(err, docs) {
+    assert.equal(err, null);
+    console.log("Found the following records");
+    console.log(docs)
+    callback(docs);
+  });
+}
+```
+<!---
+Changed console.dir to console.log, since most users will be running these examples from the command line
+rather than from within a browser console, and console.log returns better formatting.
+-->
+
+
+This query returns all the documents in the **documents** collection. Add the **findDocument** method to the **MongoClient.connect** callback:
+
+<!---
+Removed the assert line for number of documents returned on the grounds that it's too brittle.
+It's better if these code examples are idempotent, and if this one
+is run repeatedly the number of documents in the collection will change.
+-->
+
+```js
+var MongoClient = require('mongodb').MongoClient
+  , assert = require('assert');
+
+// Connection URL
+var url = 'mongodb://localhost:27017/myproject';
+// Use connect method to connect to the server
+MongoClient.connect(url, function(err, db) {
+  assert.equal(null, err);
+  console.log("Connected correctly to server");
+
+  insertDocuments(db, function() {
+    findDocuments(db, function() {
+      db.close();
+    });
+  });
+});
+```
+
+Find Documents with a Query Filter
+----------------------------------
+
+Next, add a query filter to find only documents which meet the query criteria.
+
+```js
+var findDocuments = function(db, callback) {
+  // Get the documents collection
+  var collection = db.collection('documents');
+  // Find some documents
+  collection.find({'a': 3}).toArray(function(err, docs) {
+    assert.equal(err, null);
+    console.log("Found the following records");
+    console.log(docs);
+    callback(docs);
+  });      
+}
+```
+
+Only the documents which match ``'a' : 3`` should be returned.
 
 Updating a document
 -------------------
@@ -219,27 +296,26 @@ MongoClient.connect(url, function(err, db) {
 });
 ```
 
-Find All Documents
+Index a Collection
 ------------------
-Finally, add a query that returns all the documents.
+
+[Indexes](https://docs.mongodb.org/manual/indexes/) are an important part of getting the best performance
+from your application. Here's how to create an index on a collection with Node.js:
 
 ```js
-var findDocuments = function(db, callback) {
-  // Get the documents collection
-  var collection = db.collection('documents');
-  // Find some documents
-  collection.find({}).toArray(function(err, docs) {
-    assert.equal(err, null);
-    assert.equal(2, docs.length);
-    console.log("Found the following records");
-    console.dir(docs)
-    callback(docs);
-  });      
-}
+var indexCollection = function(db, callback) {
+  db.collection('documents').createIndex(
+    { "a": 1 },
+      null,
+      function(err, results) {
+        console.log(results);
+        callback();
+    }
+  );
+};
 ```
 
-This query returns all the documents in the **documents** collection. One document was deleted earlier, so the total number
-of documents returned is 2 **2**. Add the **findDocument** method to the **MongoClient.connect** callback:
+Add the ``indexCollection`` method to your app:
 
 ```js
 var MongoClient = require('mongodb').MongoClient
@@ -250,19 +326,15 @@ var url = 'mongodb://localhost:27017/myproject';
 // Use connect method to connect to the server
 MongoClient.connect(url, function(err, db) {
   assert.equal(null, err);
-  console.log("Connected correctly to server");
+  console.log("Connected successfully to server");
 
   insertDocuments(db, function() {
-    updateDocument(db, function() {
-      removeDocument(db, function() {
-        findDocuments(db, function() {
-          db.close();
-        });
-      });
+    indexCollection(db, function() {
+      db.close();
     });
   });
 });
 ```
 
-This concludes the Quick Start guide to basic CRUD functions. For more detailed information, see the 
+This concludes the Quick Start guide. For more detailed information, see the
 [tutorials]({{< relref "reference/index.md" >}}) covering more specific topics of interest.
