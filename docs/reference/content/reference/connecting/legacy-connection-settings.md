@@ -50,18 +50,7 @@ Let's break down the `URI` string we passed as the first argument to MongoClient
 We wish to connect to a ReplicaSet consisting of one primary and 1 or more secondaries. To Do this we need to supply the driver with a seedlist of servers and the name of the ReplicaSet we wish to connect to. Let's take a look at a code example.
 
 ```js
-var MongoClient = require('mongodb').MongoClient
-  , assert = require('assert');
-
-// Connection URL
-var url = 'mongodb://localhost:27017,localhost:27018/myproject?replicaSet=foo';
-// Use connect method to connect to the Server
-MongoClient.connect(url, function(err, db) {
-  assert.equal(null, err);
-  console.log("Connected correctly to server");
-
-  db.close();
-});
+{{% connect-to-replicaset %}}
 ```
 
 Let's break down the `URI` string.

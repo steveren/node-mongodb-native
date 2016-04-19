@@ -32,19 +32,7 @@ specifies connecting to a MongoDB instance that is running on
 to use. If the database is omitted, the `MongoClient` uses the default `test` database:
 
 ```js
-var MongoClient = require('mongodb').MongoClient
-  , assert = require('assert');
-
-// Connection URL
-var url = 'mongodb://localhost:27017/myproject';
-
-// Use connect method to connect to the Server
-MongoClient.connect(url, function(err, db) {
-  assert.equal(null, err);
-  console.log("Connected correctly to server");
-
-  db.close();
-});
+{{% basic-connection %}}
 ```
 
 For more information on the URI connection string, see
@@ -59,18 +47,7 @@ include a seedlist of replica set members and the name of the replica set in the
 In the following example, the connection string specifies two of the replica set members running on `localhost:27017` and `localhost:27018`, the database to access (`myproject`), and the name of the replica set (`foo`). **When using the 2.0 driver, you must include the replica set name.**
 
 ```js
-var MongoClient = require('mongodb').MongoClient
-  , assert = require('assert');
-
-// Connection URL
-var url = 'mongodb://localhost:27017,localhost:27018/myproject?replicaSet=foo';
-// Use connect method to connect to the Server
-MongoClient.connect(url, function(err, db) {
-  assert.equal(null, err);
-  console.log("Connected correctly to server");
-
-  db.close();
-});
+{{% connect-to-replicaset %}}
 ```
 
 For more information on the URI connection string, see
@@ -83,18 +60,7 @@ To connect to a [sharded cluster] (https://docs.mongodb.org/manual/core/sharded-
 In the following example, the connection string specifies the `mongos` instances running on `localhost:50000` and `localhost:50000` and the database to access (`myproject`).
 
 ```js
-var MongoClient = require('mongodb').MongoClient
-  , assert = require('assert');
-
-// Connection URL
-var url = 'mongodb://localhost:50000,localhost:50001/myproject';
-// Use connect method to connect to the Server
-MongoClient.connect(url, function(err, db) {
-  assert.equal(null, err);
-  console.log("Connected correctly to server");
-
-  db.close();
-});
+{{% connect-to-sharded-cluster %}}
 ```
 
 For more information on the URI connection string, see

@@ -61,18 +61,7 @@ Next, create a new **app.js** file that you can use to try out some basic CRUD o
 Add code to connect to the server and the database **myproject**:
 
 ```js
-var MongoClient = require('mongodb').MongoClient
-  , assert = require('assert');
-
-// Connection URL
-var url = 'mongodb://localhost:27017/myproject';
-// Use connect method to connect to the server
-MongoClient.connect(url, function(err, db) {
-  assert.equal(null, err);
-  console.log("Connected succesfully to server");
-
-  db.close();
-});
+{{% basic-connection %}}
 ```
 
 Run your app from the command line with:
@@ -303,16 +292,7 @@ Index a Collection
 from your application. Here's how to create an index on a collection with Node.js:
 
 ```js
-var indexCollection = function(db, callback) {
-  db.collection('documents').createIndex(
-    { "a": 1 },
-      null,
-      function(err, results) {
-        console.log(results);
-        callback();
-    }
-  );
-};
+{{% index-collection %}}
 ```
 
 Add the ``indexCollection`` method to your app:
