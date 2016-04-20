@@ -15,3 +15,7 @@ The tutorials in this section provide examples of some frequently used operation
 [Connect to MongoDB]({{< relref "tutorials/connect/index.md" >}})
 
 [Creating Indexes]({{< relref "tutorials/indexes/create-indexes.md" >}})
+
+[Text Search]({{< relref "tutorials/text-search.md" >}})
+
+[Geospatial Search]({{< relref "tutorials/geospatial-search.md" >}})

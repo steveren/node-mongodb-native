@@ -2,7 +2,7 @@
 date = "2015-03-19T14:27:51-04:00"
 title = "Creating Indexes"
 [menu.main]
-  parent = "Indexes"
+  parent = "Tutorials"
   identifier = "Creating Indexes"
   weight = 30
   pre = "<i class='fa'></i>"
