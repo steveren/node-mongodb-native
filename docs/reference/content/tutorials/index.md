@@ -19,3 +19,5 @@ The tutorials in this section provide examples of some frequently used operation
 [Text Search]({{< relref "tutorials/text-search.md" >}})
 
 [Geospatial Search]({{< relref "tutorials/geospatial-search.md" >}})
+
+[GridFS]({{< relref "tutorials/gridfs/index.md" >}})
