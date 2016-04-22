@@ -2,34 +2,32 @@
 date = "2015-03-19T12:53:30-04:00"
 title = "CRUD Operations"
 [menu.main]
-  parent = "Reference"
+  parent = "Tutorials"
   identifier = "CRUD Operations"
   weight = 70
   pre = "<i class='fa'></i>"
 +++
 
-# CRUD
+# CRUD Operations
 
-For a walkthrough of the main CRUD operations please refer to the [Quick Tour]({{< ref "getting-started/quick-start.md" >}}).
+For a walkthrough of the main CRUD operations please refer to the
+[Quick Start guide]({{< ref "getting-started/quick-start.md" >}}).
 
-The driver crud operations are defined as the operations performed to insert/update/remove and query for documents. In this tutorial we will cover both the basic CRUD methods as well as the specialized *findAndModify* based methods and the new Bulk API methods allowing for efficient bulk write operations. But let's start with a simple introduction to the insert, update and remove operations that are on the collection class.
+Driver CRUD operations are defined as the operations performed to create, read, update, and delete documents.
+In this tutorial we will cover both the basic CRUD methods and the specialized ``findAndModify`` based methods
+as well as the new Bulk API methods for efficient bulk write operations.
 
 ## Write Methods
 
+Write methods are divided into those which insert documents into a collection and those which update
+documents in a collection.
 
 ### Inserting Documents
-The *insertOne* and *insertMany* methods exists on the *Collection* class and is used to insert documents into MongoDB. Code speaks a thousand words so let's see two simple examples of inserting documents.
+
+The ``insertOne`` and ``insertMany`` methods exist on the ``Collection`` class and are used to insert documents into MongoDB. 
 
 ```js
-var MongoClient = require('mongodb').MongoClient
-  , assert = require('assert');
-
-// Connection URL
-var url = 'mongodb://localhost:27017/myproject';
-// Use connect method to connect to the Server
-MongoClient.connect(url, function(err, db) {
-  assert.equal(null, err);
-  console.log("Connected correctly to server");
+{{% myproject-connect %}}
 
   // Insert a single document
   db.collection('inserts').insertOne({a:1}, function(err, r) {
@@ -47,9 +45,13 @@ MongoClient.connect(url, function(err, db) {
 });
 ```
 
-The first insert inserts a single document into the *inserts* collection. Notice that we are not explicitly creating a new *inserts* collection as the server will create it implicitly when we insert the first document. The method `Db.createIndex` only really needs to be used when creating non standard collections such as capped collections or where other parameters than the default collections need to be applied.
+The first ``insert`` inserts a single document into the *inserts* collection. Notice that there's no need to
+explicitly create a new *inserts* collection, as the server will create it implicitly when the first document
+is inserted. The method `db.createIndex` is only necessary when creating non-standard collections,
+such as [capped collections](https://docs.mongodb.org/manual/core/capped-collections/) or where parameters other
+than the defaults are necessary.
 
-The *insertOne* and *insertMany* methods also accepts an second argument that can be an options object. This object can have the following fields.
+The ``insertOne`` and ``insertMany`` methods also accept a second argument which can be an options object. This object can have the following fields:
 
 | Parameter | Type | Description |
 | :----------| :------------- | :------------- |
@@ -59,18 +61,11 @@ The *insertOne* and *insertMany* methods also accepts an second argument that ca
 | `serializeFunctions` | (Boolean, default:false) | serialize functions on an object to mongodb, by default the driver does not serialize any functions on the passed in documents. |
 | `forceServerObjectId` | (Boolean, default:false) | Force server to assign _id values instead of driver. |
 
-Let's look at a simple example where we are writing to a replicaset and we wish to ensure that we serialize a passed in function as well as have the server assign the *_id* for each document.
+The following example shows how to serialize a passed-in function when writing to a
+[replica set](https://docs.mongodb.org/manual/core/replica-set-members/).
 
 ```js
-var MongoClient = require('mongodb').MongoClient
-  , assert = require('assert');
-
-// Connection URL
-var url = 'mongodb://localhost:27017/myproject';
-// Use connect method to connect to the Server
-MongoClient.connect(url, function(err, db) {
-  assert.equal(null, err);
-  console.log("Connected correctly to server");
+{{% myproject-connect %}}
 
   // Insert a single document
   db.collection('inserts').insertOne({
@@ -80,7 +75,6 @@ MongoClient.connect(url, function(err, db) {
         w: 'majority'
       , wtimeout: 10000
       , serializeFunctions: true
-      , forceServerObjectId: true
     }, function(err, r) {
     assert.equal(null, err);
     assert.equal(1, r.insertedCount);
@@ -89,21 +83,12 @@ MongoClient.connect(url, function(err, db) {
 });
 ```
 
-That wraps up the *insert* methods. Next let's look at the *update* methods.
-
 ### Updating Documents
-The *updateOne* and *updateMany* methods exists on the *Collection* class and is used to update and upsert documents into MongoDB. Let's look at a couple of usage examples.
+
+The ``updateOne`` and ``updateMany`` methods exist on the ``Collection`` class and are used to update and upsert documents.
 
 ```js
-var MongoClient = require('mongodb').MongoClient
-  , assert = require('assert');
-
-// Connection URL
-var url = 'mongodb://localhost:27017/myproject';
-// Use connect method to connect to the Server
-MongoClient.connect(url, function(err, db) {
-  assert.equal(null, err);
-  console.log("Connected correctly to server");
+{{% myproject-connect %}}
 
   var col = db.collection('updates');
   // Insert a single document
@@ -138,7 +123,7 @@ MongoClient.connect(url, function(err, db) {
 });
 ```
 
-The *update* method also accepts a third argument that can be an options object. This object can have the following fields.
+The ``update`` method also accepts a third argument which can be an options object. This object can have the following fields:
 
 | Parameter | Type | Description |
 | :----------| :------------- | :------------- |
@@ -148,21 +133,14 @@ The *update* method also accepts a third argument that can be an options object.
 | `multi` | (Boolean, default:false) | Update one/all documents with operation. |
 | `upsert` | (Boolean, default:false) | Update operation is an upsert. |
 
-Just as for *insert* the *update* method allows you to specify a per operation write concern using the *w*, *wtimeout* and *fsync* parameters
+Just as for ``insert``, the ``update`` method allows you to specify a per operation write concern using the ``w``, ``wtimeout`` and ``fsync`` parameters.
 
 ### Removing Documents
-The *deleteOne* and *deleteMany* methods exist on the *Collection* class and is used to remove documents from MongoDB. Let's look at a couple of usage examples.
+
+The ``deleteOne`` and ``deleteMany`` methods exist on the ``Collection`` class and are used to remove documents from MongoDB.
 
 ```js
-var MongoClient = require('mongodb').MongoClient
-  , assert = require('assert');
-
-// Connection URL
-var url = 'mongodb://localhost:27017/myproject';
-// Use connect method to connect to the Server
-MongoClient.connect(url, function(err, db) {
-  assert.equal(null, err);
-  console.log("Connected correctly to server");
+{{% myproject-connect %}}
 
   var col = db.collection('removes');
   // Insert a single document
@@ -186,7 +164,7 @@ MongoClient.connect(url, function(err, db) {
 });
 ```
 
-The *deleteOne* and *deleteMany* methods also accepts a second argument that can be an options object. This object can have the following fields.
+The ``deleteOne`` and ``deleteMany`` methods also accept a second argument which can be an options object. This object can have the following fields:
 
 | Parameter | Type | Description |
 | :----------| :------------- | :------------- |
@@ -195,21 +173,17 @@ The *deleteOne* and *deleteMany* methods also accepts a second argument that can
 | `j` | (Boolean, default:false) | write waits for journal sync. |
 | `single` | (Boolean, default:false) | Removes the first document found. |
 
-Just as for *updateOne/updateMany* and *insertOne/insertMany* the *deleteOne/deleteMany* method allows you to specify a per operation write concern using the *w*, *wtimeout* and *fsync* parameters
+Just as for ``updateOne/updateMany`` and ``insertOne/insertMany``, the ``deleteOne/deleteMany`` method allows you to specify a per operation write concern using the ``w``, ``wtimeout`` and ``fsync`` parameters.
 
-### findOneAndUpdate, findOneAndDelete and findOneAndReplace
-The three methods *findOneAndUpdate*, *findOneAndDelete* and *findOneAndReplace* are special commands that allows the user to update or upsert a document and have the modified or existing document returned. It comes at a cost as the operation takes a write lock for the duration of the operation as it needs to ensure the modification is *atomic*. Let's look at *findOneAndUpdate* first using an example.
+### findOneAndUpdate, findOneAndDelete, and findOneAndReplace
+
+The three methods ``findOneAndUpdate``, ``findOneAndDelete`` and ``findOneAndReplace`` are special commands which
+allow the user to update or upsert a document and have the modified or existing document returned. When using these
+methods, the operation takes a write lock for the duration of the operation in order to ensure the modification is
+[atomic](https://docs.mongodb.org/manual/core/write-operations-atomicity/).
 
 ```js
-var MongoClient = require('mongodb').MongoClient
-  , assert = require('assert');
-
-// Connection URL
-var url = 'mongodb://localhost:27017/myproject';
-// Use connect method to connect to the Server
-MongoClient.connect(url, function(err, db) {
-  assert.equal(null, err);
-  console.log("Connected correctly to server");
+{{% myproject-connect %}}
 
   var col = db.collection('findAndModify');
   // Insert a single document
@@ -237,7 +211,7 @@ MongoClient.connect(url, function(err, db) {
 });
 ```
 
-The *findOneAndUpdate* method also accepts a third argument that can be an options object. This object can have the following fields.
+The ``findOneAndUpdate`` method also accepts a third argument which can be an options object. This object can have the following fields:
 
 | Parameter | Type | Description |
 | :----------| :------------- | :------------- |
@@ -249,18 +223,10 @@ The *findOneAndUpdate* method also accepts a third argument that can be an optio
 | `projection` | (Object, default:null) | Projection for returned result |
 | `returnOriginal` | (Boolean, default:true) | Set to false if you want to return the modified object rather than the original. Ignored for remove. |
 
-The *findOneAndDelete* function is a function especially defined to help remove a document. Let's look at an example of usage.
+The ``findOneAndDelete`` function is designed to help remove a document.
 
 ```js
-var MongoClient = require('mongodb').MongoClient
-  , assert = require('assert');
-
-// Connection URL
-var url = 'mongodb://localhost:27017/myproject';
-// Use connect method to connect to the Server
-MongoClient.connect(url, function(err, db) {
-  assert.equal(null, err);
-  console.log("Connected correctly to server");
+{{% myproject-connect %}}
 
   var col = db.collection('findAndModify');
   // Insert a single document
@@ -281,7 +247,7 @@ MongoClient.connect(url, function(err, db) {
 });
 ```
 
-Just as for *findOneAndUpdate* it allows for an object of options to be passed in that can have the following fields.
+Like ``findOneAndUpdate``, it allows an object of options to be passed in which can have the following fields:
 
 | Parameter | Type | Description |
 | :----------| :------------- | :------------- |
@@ -291,18 +257,11 @@ Just as for *findOneAndUpdate* it allows for an object of options to be passed i
 | `sort` | (Object, default:null) | Sort for find operation. |
 
 ### BulkWrite
-The *bulkWrite* function allows for a simple set of bulk operations to be done in a non fluent way as in comparison to the bulk API discussed next. Let's look at an example.
+
+The ``bulkWrite`` function allows a simple set of bulk operations to run in a non-fluent way, in comparison to the bulk API discussed next.
 
 ```js
-var MongoClient = require('mongodb').MongoClient
-  , assert = require('assert');
-
-// Connection URL
-var url = 'mongodb://localhost:27017/myproject';
-// Use connect method to connect to the Server
-MongoClient.connect(url, function(err, db) {
-  assert.equal(null, err);
-  console.log("Connected correctly to server");
+{{% myproject-connect %}}
 
   // Get the collection
   var col = db.collection('bulk_write');
@@ -329,7 +288,7 @@ MongoClient.connect(url, function(err, db) {
 });
 ```
 
-As we can see the *bulkWrite* function takes an array of operation that can be objects of either *insertOne*, *insertMany*, *updateOne*, *updateMany*, *deleteOne* or *deleteMany*. It also takes a second parameter that takes the following options.
+The ``bulkWrite`` function takes an array of operations which can be objects of either ``insertOne``, ``insertMany``, ``updateOne``, ``updateMany``, ``deleteOne`` or ``deleteMany``. It also takes a second parameter which takes the following options:
 
 | Parameter | Type | Description |
 | :----------| :------------- | :------------- |
@@ -338,21 +297,12 @@ As we can see the *bulkWrite* function takes an array of operation that can be o
 | `wtimeout` | {Number, 0} | set the timeout for waiting for write concern to finish (combines with w option). |
 | `j` | (Boolean, default:false) | write waits for journal sync. |
 
-This covers the basic write operations. Let's have a look at the Bulk write operations next.
-
 ## Bulk Write Operations
-The bulk write operations make it easy to write groups of operations together to MongoDB. There are some caveats and to get the best performance you need to be running against MongoDB *2.6* or higher that support the new write commands. Bulk operations are split into *ordered* and *unordered* bulk operations. An *ordered* bulk operation guarantees the order of execution of writes while the *unordered* bulk operation makes no assumptions about the order of execution. In the Node.js driver the *unordered* bulk operations will group operations according to type and write them in parallel. Let's have a look at how to build an ordered bulk operation.
+
+Bulk write operations make it easy to write groups of operations together to MongoDB. There are some caveats and to get the best performance you need to be running against MongoDB version 2.6 or higher, which supports the new write commands. Bulk operations are split into *ordered* and *unordered* bulk operations. An *ordered* bulk operation guarantees the order of execution of writes while the *unordered* bulk operation makes no assumptions about the order of execution. In the Node.js driver the *unordered* bulk operations will group operations according to type and write them in parallel.
 
 ```js
-var MongoClient = require('mongodb').MongoClient
-  , assert = require('assert');
-
-// Connection URL
-var url = 'mongodb://localhost:27017/myproject';
-// Use connect method to connect to the Server
-MongoClient.connect(url, function(err, db) {
-  assert.equal(null, err);
-  console.log("Connected correctly to server");
+{{% myproject-connect %}}
 
   var col = db.collection('bulkops');
   // Create ordered bulk, for unordered initializeUnorderedBulkOp()
@@ -378,9 +328,9 @@ MongoClient.connect(url, function(err, db) {
 });
 ```
 
-We will not cover the results object here as it's documented in the driver API. The Bulk API handles all the splitting of operations into multiple writes and also emulates 2.6 and higher write commands for 2.4 and earlier servers.
+The Bulk API handles all the splitting of operations into multiple writes and also emulates 2.6 and higher write commands for 2.4 and earlier servers.
 
-There are some important things to keep in mind when using the bulk API and especially the *ordered* bulk API mode. The write commands are single operation type. That means they can only do insert/update and remove. If you f.ex do the following combination of operations.
+There are some important things to keep in mind when using the bulk API and especially the *ordered* bulk API mode. The write commands are single operation type. That means they can only do insert/update and remove. If you f.ex do the following combination of operations:
 
     Insert {a:1}
     Update {a:1} to {a:1, b:1}
@@ -388,7 +338,7 @@ There are some important things to keep in mind when using the bulk API and espe
     Remove {b:1}
     Insert {a:3}
 
-This will result in the driver issuing 4 write commands to the server.
+This will result in the driver issuing four write commands to the server:
 
     Insert Command with {a:1}
     Update Command {a:1} to {a:1, b:1}
@@ -396,7 +346,7 @@ This will result in the driver issuing 4 write commands to the server.
     Remove Command with {b:1}
     Insert Command with {a:3}    
 
-If you instead organize your *ordered* in the following manner.
+If you instead organize your *ordered* in the following manner:
 
     Insert {a:1}
     Insert {a:2}
@@ -404,35 +354,26 @@ If you instead organize your *ordered* in the following manner.
     Update {a:1} to {a:1, b:1}
     Remove {b:1}
 
-The number of write commands issued by the driver will be.
+The number of write commands issued by the driver will be:
 
     Insert Command with {a:1}, {a:2}, {a:3}
     Update Command {a:1} to {a:1, b:1}
     Remove Command with {b:1}
 
-Allowing for more efficient and faster bulk write operation.
+Attention to the order of operations results in more efficient and faster bulk write operation.
 
-For *unordered* bulk operations this is not important as the driver sorts operations by type and executes them in parallel.
-
-This covers write operations for MongoDB. Let's look at querying for documents next.
+For *unordered* bulk operations this is not important, as the driver sorts operations by type and executes them in parallel.
 
 ## Read Methods
-The main method for querying the database are the *find* and the *aggregate* method. In this CRUD tutorial we will focus on *find*.
 
-The *method* return a cursor that allows us to operate on the data. The *cursor* also implements the Node.js 0.10.x or higher stream interface allowing us to pipe the results to other streams.
+The main method for querying the database is the ``find`` method.
 
-Let's look at a simple find example that materializes all the documents from a query using the toArray but limits the number of returned results to 2 documents.
+``find`` returns a cursor which allows the user to operate on the data. The *cursor* also implements the Node.js 0.10.x or higher stream interface, allowing the user to pipe the results to other streams.
+
+The following example materializes all the documents from a query using the ``toArray`` method, but limits the number of returned results to two documents.
 
 ```js
-var MongoClient = require('mongodb').MongoClient
-  , assert = require('assert');
-
-// Connection URL
-var url = 'mongodb://localhost:27017/myproject';
-// Use connect method to connect to the Server
-MongoClient.connect(url, function(err, db) {
-  assert.equal(null, err);
-  console.log("Connected correctly to server");
+{{% myproject-connect %}}
 
   var col = db.collection('find');
   // Insert a single document
@@ -450,9 +391,7 @@ MongoClient.connect(url, function(err, db) {
 });
 ```
 
-The cursor returned by the *find* method has a lot of methods that allow for chaining of options for a query. Once the query is ready to be executed you can retrieve the documents using the *next*, *each* and *toArray* methods. If the query returns a lot of documents it's preferable to use the *next* or *each* methods as the *toArray* method will materialize all the documents into memory before calling the callback function potentially using a lot of memory if the query returns a lot of documents.
-
-Let's look at some of the options we can set on the cursor.
+The cursor returned by the ``find`` method has several methods that allow for chaining of options for a query. Once the query is ready to be executed you can retrieve the documents using the ``next``, ``each`` and ``toArray`` methods. If the query returns many documents it's preferable to use the ``next`` or ``each`` methods, as the ``toArray`` method will materialize all the documents into memory before calling the callback function, potentially using a lot of memory if the query returns many documents.
 
 ```js
 collection.find({}).project({a:1})                             // Create a projection of field a
@@ -479,7 +418,7 @@ collection.find({}).sort([['a', 1]])                           // Sets the sort 
 collection.find({}).hint('a_1')                                // Set the cursor hint
 ```
 
-All options are chainable, so one can combine settings in the following way.
+All options are chainable, so you can combine settings in the following way:
 
 ```js
 collection.find({}).maxTimeMS(1000).maxScan(100).skip(1).toArray(..)
@@ -487,18 +426,10 @@ collection.find({}).maxTimeMS(1000).maxScan(100).skip(1).toArray(..)
 
 More information can be found in the [Cursor API documentation](/node-mongodb-native/2.0/api/Cursor.html).
 
-We already looked at *toArray* method above. Let's take a look at the *next* method.
+The following example uses the ``next`` method.
 
 ```js
-var MongoClient = require('mongodb').MongoClient
-  , assert = require('assert');
-
-// Connection URL
-var url = 'mongodb://localhost:27017/myproject';
-// Use connect method to connect to the Server
-MongoClient.connect(url, function(err, db) {
-  assert.equal(null, err);
-  console.log("Connected correctly to server");
+{{% myproject-connect %}}
 
   var col = db.collection('find');
   // Insert a single document
@@ -516,18 +447,12 @@ MongoClient.connect(url, function(err, db) {
 });
 ```
 
-The *next* method allows the application to read one document at a time using callbacks. Let's look at the *each* method next.
+The ``next`` method allows the application to read one document at a time using callbacks.
+
+The following example uses the ``each`` method.
 
 ```js
-var MongoClient = require('mongodb').MongoClient
-  , assert = require('assert');
-
-// Connection URL
-var url = 'mongodb://localhost:27017/myproject';
-// Use connect method to connect to the Server
-MongoClient.connect(url, function(err, db) {
-  assert.equal(null, err);
-  console.log("Connected correctly to server");
+{{% myproject-connect %}}
 
   var col = db.collection('find');
   // Insert a single document
@@ -547,4 +472,4 @@ MongoClient.connect(url, function(err, db) {
 });
 ```
 
-The *each* method will call the supplied callback until there are no more documents available that satisfy the query. Once the available documents is exhausted it will return *null* for the second parameter in the callback. If you wish to terminate the each early you should return false in your *each* callback. This will stop the cursor from returning documents.
+The ``each`` method calls the supplied callback until there are no more documents available that satisfy the query. Once the available documents are exhausted it will return ``null`` for the second parameter in the callback. If you wish to terminate the ``each`` early you should return false in your ``each`` callback. This will stop the cursor from returning documents.
