@@ -17,6 +17,11 @@ Driver CRUD operations are defined as the operations performed to create, read, 
 In this tutorial we will cover both the basic CRUD methods and the specialized ``findAndModify`` based methods
 as well as the new Bulk API methods for efficient bulk write operations.
 
+<div class="pull-right">
+  <input type="checkbox" checked="" class="distroPicker" data-toggle="toggle" data-on="JavaScript 5" data-off="JavaScript 6" data-offstyle="success">
+</div>
+
+
 ## Write Methods
 
 Write methods are divided into those which insert documents into a collection and those which update
@@ -26,7 +31,9 @@ documents in a collection.
 
 The ``insertOne`` and ``insertMany`` methods exist on the ``Collection`` class and are used to insert documents into MongoDB. 
 
-```js
+
+
+<section class="javascript5"><pre><code class="hljs">
 {{% myproject-connect %}}
 
   // Insert a single document
@@ -43,7 +50,25 @@ The ``insertOne`` and ``insertMany`` methods exist on the ``Collection`` class a
     });
   });
 });
-```
+
+</code></pre></section>
+<section class="javascript6 hidden"><pre><code class="hljs">
+{{% js6-connect %}}
+
+  // Insert a single document
+  var r = yield db.collection('inserts').insertOne({a:1});
+  assert.equal(1, r.insertedCount);
+
+  // Insert multiple documents
+  var r = yield db.collection('inserts').insertMany([{a:2}, {a:3}]);
+  assert.equal(2, r.insertedCount);
+
+  // Close connection
+  db.close();
+}).catch(function(err) {
+  console.log(err.stack);
+});
+</code></pre></section>
 
 The first ``insert`` inserts a single document into the *inserts* collection. Notice that there's no need to
 explicitly create a new *inserts* collection, as the server will create it implicitly when the first document
@@ -64,7 +89,7 @@ The ``insertOne`` and ``insertMany`` methods also accept a second argument which
 The following example shows how to serialize a passed-in function when writing to a
 [replica set](https://docs.mongodb.org/manual/core/replica-set-members/).
 
-```js
+<section class="javascript5"><pre><code class="hljs">
 {{% myproject-connect %}}
 
   // Insert a single document
@@ -81,13 +106,33 @@ The following example shows how to serialize a passed-in function when writing t
     db.close();
   });
 });
-```
+</code></pre></section>
+<section class="javascript6 hidden"><pre><code class="hljs">
+{{% js6-connect %}}
+
+  // Insert a single document
+  var r = yield db.collection('inserts').insertOne({
+        a:1
+      , b: function() { return 'hello'; }
+    }, {
+        w: 'majority'
+      , wtimeout: 10000
+      , serializeFunctions: true
+      , forceServerObjectId: true
+    });
+
+  assert.equal(1, r.insertedCount);
+  db.close();
+}).catch(function(err) {
+  console.log(err.stack);
+});
+</code></pre></section>
 
 ### Updating Documents
 
 The ``updateOne`` and ``updateMany`` methods exist on the ``Collection`` class and are used to update and upsert documents.
 
-```js
+<section class="javascript5"><pre><code class="hljs">
 {{% myproject-connect %}}
 
   var col = db.collection('updates');
@@ -121,7 +166,37 @@ The ``updateOne`` and ``updateMany`` methods exist on the ``Collection`` class a
     });
   });
 });
-```
+</code></pre></section>
+<section class="javascript6 hidden"><pre><code class="hljs">
+{{% js6-connect %}}
+
+  // Get the updates collection
+  var col = db.collection('updates');
+  // Insert a single document
+  var r = yield col.insertMany([{a:1}, {a:2}, {a:2}]);
+  assert.equal(3, r.insertedCount);
+
+  // Update a single document
+  var r = yield col.updateOne({a:1}, {$set: {b: 1}});
+  assert.equal(1, r.matchedCount);
+  assert.equal(1, r.modifiedCount);
+
+  // Update multiple documents
+  var r = yield col.updateMany({a:2}, {$set: {b: 1}});
+  assert.equal(2, r.matchedCount);
+  assert.equal(2, r.modifiedCount);
+
+  // Upsert a single document
+  var r = yield col.updateOne({a:3}, {$set: {b: 1}}, {
+    upsert: true
+  });
+  assert.equal(0, r.matchedCount);
+  assert.equal(1, r.upsertedCount);
+  db.close();
+}).catch(function(err) {
+  console.log(err.stack);
+});
+</code></pre></section>
 
 The ``update`` method also accepts a third argument which can be an options object. This object can have the following fields:
 
@@ -139,7 +214,7 @@ Just as for ``insert``, the ``update`` method allows you to specify a per operat
 
 The ``deleteOne`` and ``deleteMany`` methods exist on the ``Collection`` class and are used to remove documents from MongoDB.
 
-```js
+<section class="javascript5"><pre><code class="hljs">
 {{% myproject-connect %}}
 
   var col = db.collection('removes');
@@ -162,7 +237,28 @@ The ``deleteOne`` and ``deleteMany`` methods exist on the ``Collection`` class a
     });
   });
 });
-```
+</code></pre></section>
+<section class="javascript6 hidden"><pre><code class="hljs">
+{{% js6-connect %}}
+
+  // Get the removes collection
+  var col = db.collection('removes');
+  // Insert a single document
+  var r = yield col.insertMany([{a:1}, {a:2}, {a:2}]);
+  assert.equal(3, r.insertedCount);
+
+  // Remove a single document
+  var r = yield col.deleteOne({a:1});
+  assert.equal(1, r.deletedCount);
+
+  // Update multiple documents
+  var r = yield col.deleteMany({a:2});
+  assert.equal(2, r.deletedCount);
+  db.close();
+}).catch(function(err) {
+  console.log(err.stack);
+});
+</code></pre></section>
 
 The ``deleteOne`` and ``deleteMany`` methods also accept a second argument which can be an options object. This object can have the following fields:
 
@@ -182,7 +278,7 @@ allow the user to update or upsert a document and have the modified or existing 
 methods, the operation takes a write lock for the duration of the operation in order to ensure the modification is
 [atomic](https://docs.mongodb.org/manual/core/write-operations-atomicity/).
 
-```js
+<section class="javascript5"><pre><code class="hljs">
 {{% myproject-connect %}}
 
   var col = db.collection('findAndModify');
@@ -209,7 +305,32 @@ methods, the operation takes a write lock for the duration of the operation in o
     });
   });
 });
-```
+</code></pre></section>
+<section class="javascript6 hidden"><pre><code class="hljs">
+{{% js6-connect %}}
+
+  // Get the findAndModify collection
+  var col = db.collection('findAndModify');
+  // Insert a single document
+  var r = yield col.insert([{a:1}, {a:2}, {a:2}]);
+  assert.equal(3, r.result.n);
+
+  // Modify and return the modified document
+  var r = yield col.findOneAndUpdate({a:1}, {$set: {b: 1}}, {
+      returnOriginal: false
+    , sort: [[a,1]]
+    , upsert: true
+  });
+  assert.equal(1, r.value.b);
+
+  // Remove and return a document
+  var r = yield col.findOneAndDelete({a:2});
+  assert.ok(r.value.b == null);
+  db.close();
+}).catch(function(err) {
+  console.log(err.stack);
+});
+</code></pre></section>
 
 The ``findOneAndUpdate`` method also accepts a third argument which can be an options object. This object can have the following fields:
 
@@ -225,7 +346,7 @@ The ``findOneAndUpdate`` method also accepts a third argument which can be an op
 
 The ``findOneAndDelete`` function is designed to help remove a document.
 
-```js
+<section class="javascript5"><pre><code class="hljs">
 {{% myproject-connect %}}
 
   var col = db.collection('findAndModify');
@@ -245,7 +366,26 @@ The ``findOneAndDelete`` function is designed to help remove a document.
     });
   });
 });
-```
+</code></pre></section>
+<section class="javascript6 hidden"><pre><code class="hljs">
+{{% js6-connect %}}
+
+  // Get the findAndModify collection
+  var col = db.collection('findAndModify');
+  // Insert a single document
+  var r = yield col.insert([{a:1}, {a:2}, {a:2}]);
+  assert.equal(3, r.result.n);
+
+  // Remove a document from MongoDB and return it
+  var r = yield col.findOneAndDelete({a:1}, {
+      sort: [[a,1]]
+    });
+  assert.ok(r.value.b == null);
+  db.close();
+}).catch(function(err) {
+  console.log(err.stack);
+});
+</code></pre></section>
 
 Like ``findOneAndUpdate``, it allows an object of options to be passed in which can have the following fields:
 
@@ -260,7 +400,7 @@ Like ``findOneAndUpdate``, it allows an object of options to be passed in which 
 
 The ``bulkWrite`` function allows a simple set of bulk operations to run in a non-fluent way, in comparison to the bulk API discussed next.
 
-```js
+<section class="javascript5"><pre><code class="hljs">
 {{% myproject-connect %}}
 
   // Get the collection
@@ -286,7 +426,34 @@ The ``bulkWrite`` function allows a simple set of bulk operations to run in a no
     db.close();
   });
 });
-```
+</code></pre></section>
+<section class="javascript6 hidden"><pre><code class="hljs">
+{{% js6-connect %}}
+
+  // Get the collection
+  var col = db.collection('bulk_write');
+  var r = yield col.bulkWrite([
+      { insertOne: { document: { a: 1 } } }
+    , { updateOne: { filter: {a:2}, update: {$set: {a:2}}, upsert:true } }
+    , { updateMany: { filter: {a:2}, update: {$set: {a:2}}, upsert:true } }
+    , { deleteOne: { filter: {c:1} } }
+    , { deleteMany: { filter: {c:1} } }
+    , { replaceOne: { filter: {c:3}, replacement: {c:4}, upsert:true}}]
+  , {ordered:true, w:1});
+  assert.equal(1, r.insertedCount);
+  assert.equal(1, Object.keys(r.insertedIds).length);
+  assert.equal(1, r.matchedCount);
+  assert.equal(0, r.modifiedCount);
+  assert.equal(0, r.deletedCount);
+  assert.equal(2, r.upsertedCount);
+  assert.equal(2, Object.keys(r.upsertedIds).length);
+
+  // Ordered bulk operation
+  db.close();
+}).catch(function(err) {
+  console.log(err.stack);
+});
+</code></pre></section>
 
 The ``bulkWrite`` function takes an array of operations which can be objects of either ``insertOne``, ``insertMany``, ``updateOne``, ``updateMany``, ``deleteOne`` or ``deleteMany``. It also takes a second parameter which takes the following options:
 
@@ -301,7 +468,7 @@ The ``bulkWrite`` function takes an array of operations which can be objects of 
 
 Bulk write operations make it easy to write groups of operations together to MongoDB. There are some caveats and to get the best performance you need to be running against MongoDB version 2.6 or higher, which supports the new write commands. Bulk operations are split into *ordered* and *unordered* bulk operations. An *ordered* bulk operation guarantees the order of execution of writes while the *unordered* bulk operation makes no assumptions about the order of execution. In the Node.js driver the *unordered* bulk operations will group operations according to type and write them in parallel.
 
-```js
+<section class="javascript5"><pre><code class="hljs">
 {{% myproject-connect %}}
 
   var col = db.collection('bulkops');
@@ -326,7 +493,34 @@ Bulk write operations make it easy to write groups of operations together to Mon
     db.close();
   });
 });
-```
+</code></pre></section>
+<section class="javascript6 hidden"><pre><code class="hljs">
+{{% js6-connect %}}
+
+  // Get the collection
+  var col = db.collection('bulkops');
+  // Create ordered bulk, for unordered initializeUnorderedBulkOp()
+  var bulk = col.initializeOrderedBulkOp();
+  // Insert 10 documents
+  for(var i = 0; i < 10; i++) {
+    bulk.insert({a: i});
+  }
+
+  // Next perform some upserts
+  for(var i = 0; i < 10; i++) {
+    bulk.find({b:i}).upsert().updateOne({b:1});
+  }
+
+  // Finally perform a remove operation
+  bulk.find({b:1}).deleteOne();
+
+  // Execute the bulk with a journal write concern
+  var result = yield bulk.execute();
+  db.close();
+}).catch(function(err) {
+  console.log(err.stack);
+});
+</code></pre></section>
 
 The Bulk API handles all the splitting of operations into multiple writes and also emulates 2.6 and higher write commands for 2.4 and earlier servers.
 
@@ -372,7 +566,7 @@ The main method for querying the database is the ``find`` method.
 
 The following example materializes all the documents from a query using the ``toArray`` method, but limits the number of returned results to two documents.
 
-```js
+<section class="javascript5"><pre><code class="hljs">
 {{% myproject-connect %}}
 
   var col = db.collection('find');
@@ -389,7 +583,24 @@ The following example materializes all the documents from a query using the ``to
     });
   });
 });
-```
+</code></pre></section>
+<section class="javascript6 hidden"><pre><code class="hljs">
+{{% js6-connect %}}
+
+  // Get the collection
+  var col = db.collection('find');
+  // Insert a single document
+  var r = yield col.insertMany([{a:1}, {a:1}, {a:1}]);
+  assert.equal(3, r.insertedCount);
+
+  // Get first two documents that match the query
+  var docs = yield col.find({a:1}).limit(2).toArray();
+  assert.equal(2, docs.length);
+  db.close();
+}).catch(function(err) {
+  console.log(err.stack);
+});
+</code></pre></section>
 
 The cursor returned by the ``find`` method has several methods that allow for chaining of options for a query. Once the query is ready to be executed you can retrieve the documents using the ``next``, ``each`` and ``toArray`` methods. If the query returns many documents it's preferable to use the ``next`` or ``each`` methods, as the ``toArray`` method will materialize all the documents into memory before calling the callback function, potentially using a lot of memory if the query returns many documents.
 
@@ -428,7 +639,7 @@ More information can be found in the [Cursor API documentation](/node-mongodb-na
 
 The following example uses the ``next`` method.
 
-```js
+<section class="javascript5"><pre><code class="hljs">
 {{% myproject-connect %}}
 
   var col = db.collection('find');
@@ -445,7 +656,34 @@ The following example uses the ``next`` method.
     });
   });
 });
-```
+</code></pre></section>
+<section class="javascript6 hidden">
+In ECMAScript 6, The new `generator` functions allow for what is arguably a 
+much cleaner and easier way to read iteration code.
+
+<pre><code class="hljs">
+{{% js6-connect %}}
+
+  // Get the collection
+  var col = db.collection('find');
+  // Insert a single document
+  var r = yield col.insertMany([{a:1}, {a:1}, {a:1}]);
+  assert.equal(3, r.insertedCount);
+
+  // Get the cursor
+  var cursor = col.find({a:1}).limit(2);
+
+  // Iterate over the cursor
+  while(yield cursor.hasNext()) {
+    var doc = yield cursor.next();
+    console.dir(doc);
+  }
+
+  db.close();
+}).catch(function(err) {
+  console.log(err.stack);
+});	
+</code></pre></section>
 
 The ``next`` method allows the application to read one document at a time using callbacks.
 
