@@ -33,6 +33,7 @@ MongoDB project, please report it according to the instructions found in the [Cr
 
 We are happy to accept contributions to help improve the driver.
 We will review user contributions to ensure they meet the standards of the codebase.
+
 Pull requests must pass the travis.ci checks as well as include documentation
 and tests.
 
@@ -45,8 +46,13 @@ $ npm install
 $ git checkout -b myNewFeature
 ```
 
+<<<<<<< HEAD
 To run the test suite, you must have the `mongod` executable in your current
 path.
+=======
+Ensure your code passes the test suite. Before running the test suite make sure you have the `mongod` executable 
+in your current path.
+>>>>>>> 8361d7e45a9a9e774cc0e38eaba7fb5f28b039a2
 
 Run the functional test suite.
 ```bash

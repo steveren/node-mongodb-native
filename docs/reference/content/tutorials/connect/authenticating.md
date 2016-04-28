@@ -108,7 +108,6 @@ To connect using the X.509 authentication mechanism, specify `MONGODB-X509` as t
 
 In addition to the connection string, pass to the `MongoClient.connect` method a connections options for the `server` with  the X.509 certificate and other [TLS/SSL connections]({{< relref "tutorials/connect/ssl.md" >}}) options.
 
-
 ```js
 var MongoClient = require('mongodb').MongoClient,
   f = require('util').format,

@@ -11,7 +11,6 @@ title = "Tutorials"
 
 The tutorials in this section provide examples of some frequently used operations. This section is not meant to be an exhaustive list of all operations available in the Node.js driver.
 
-
 [Connect to MongoDB]({{< relref "tutorials/connect/index.md" >}})
 
 [CRUD Operations]({{< relref "tutorials/crud.md" >}})

@@ -29,9 +29,8 @@ documents in a collection, and those which remove documents from a collection.
 
 ### Insert Documents
 
-The ``insertOne`` and ``insertMany`` methods exist on the ``Collection`` class and are used to insert documents into MongoDB. 
-
-
+The ``insertOne`` and ``insertMany`` methods exist on the ``Collection`` class and are
+used to insert documents into MongoDB.
 
 <section class="javascript5"><pre><code class="hljs">
 {{% myproject-connect %}}

@@ -21,7 +21,9 @@ collection that stores the file metadata.
 When you query a GridFS store for a file, the driver or client will reassemble the chunks as needed. GridFS is useful not only for storing files that exceed 16 megabytes but also for storing any files which you want to access without having to load the entire file into memory.
 
 {{% note %}}
+
 For more information about GridFS, see the [MongoDB GridFS documentation](http://docs.mongodb.org/manual/core/gridfs/).
+
 {{% /note %}}
 
 The Node.js Driver includes the legacy `GridStore` API.
