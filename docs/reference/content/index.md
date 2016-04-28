@@ -13,7 +13,8 @@ Welcome to the MongoDB Node.js 2.x driver documentation.
 
 The [What's New]({{< relref "upgrade-migration/index.md" >}}) guide explains the major new features of the driver.
 
-If you are upgrading from the 1.x series of the driver, consult the [Upgrading]({{< relref "upgrade-migration/upgrading.md" >}}) documentation for
+If you are upgrading from the 1.x series of the driver, consult the
+[Upgrading]({{< relref "upgrade-migration/upgrading.md" >}}) documentation for
 information on recent changes.
 
 ## Starting points

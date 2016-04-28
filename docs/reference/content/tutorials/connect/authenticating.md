@@ -108,7 +108,6 @@ To connect using the X.509 authentication mechanism, specify `MONGODB-X509` as t
 
 In addition to the connection string, pass to the `MongoClient.connect` method a connections options for the `server` with  the X.509 certificate and other [TLS/SSL connections]({{< relref "tutorials/connect/ssl.md" >}}) options.
 
-
 ```js
 var MongoClient = require('mongodb').MongoClient,
   f = require('util').format,
@@ -136,7 +135,11 @@ MongoClient.connect(f('mongodb://%s@server:27017/test?authMechanism=MONGODB-X509
 });
 ```
 
+<<<<<<< HEAD
 For more information on connecting to MongoDB instance, replica set, and sharded cluster with TLS/SSL options, see [TLS/SSL connections options]({{< relref "tutorials/connect/ssl.md" >}}).
+=======
+For more information on connecting to MongoDB instance, replica set, and sharded cluster with TLS/SSL options, see [TLS/SSL connections options]({{< relref "reference/connecting/ssl.md" >}}).
+>>>>>>> 8361d7e45a9a9e774cc0e38eaba7fb5f28b039a2
 
 For more information, refer to the MongoDB manual
 [X.509 tutorial](http://docs.mongodb.org/manual/tutorial/configure-x509-client-authentication/#add-x-509-certificate-subject-as-a-user) for more information about determining the subject name from the certificate.

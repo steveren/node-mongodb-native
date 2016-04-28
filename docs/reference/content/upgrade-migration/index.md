@@ -33,3 +33,4 @@ Key features of the 2.0 driver include:
 ## Upgrading
 
 See the [upgrading guide]({{<ref "upgrade-migration/upgrading.md">}}) on how to upgrade to 2.0
+
